@@ -1,7 +1,6 @@
 package spider
 
 import(
-	"fmt"
 	"log"
 	"errors"
 	"strings"
@@ -34,8 +33,29 @@ func SubEncode(msg string, key map[rune]rune,fill bool) string{
 		}else{
 			cmsg = append(cmsg,'?')
 		}
-		
-		fmt.Printf("%c\n",cmsg)
 	}
-	return msg
+	return string(cmsg)
+}
+
+func SubDecode(msg string, key map[rune]rune,fill bool) string{
+	msg = strings.ToLower(msg)
+	var pmsg []rune
+	for _,char := range msg{
+		var found = false
+		for dec,enc :=range key{
+			if enc==char{
+				pmsg = append(pmsg, dec)
+				found = true
+				break
+			}
+		}
+		if(!found){
+			if(fill){
+				pmsg = append(pmsg, char)
+			}else{
+				pmsg = append(pmsg, '?')
+			}
+		}
+	}
+	return string(pmsg)
 }
