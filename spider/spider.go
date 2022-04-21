@@ -1,12 +1,14 @@
 package spider
 
-import(
-	"log"
+import (
 	"errors"
+	"log"
 	"strings"
+	"unicode"
+	//"fmt"
 )
-//var atbash map[rune]rune
-const plain = "abcdefghijklmnopqrstuvwxyz"
+
+
 func QuickMap(alph string) (map[rune]rune,error){
 	key := make(map[rune]rune)
 	if(len(alph)!=26){
@@ -14,48 +16,73 @@ func QuickMap(alph string) (map[rune]rune,error){
 		log.Fatalln(alErr)
 		return key, alErr
 	}else{
+		plain := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		plslice := []rune(plain)
-		for ind,char := range alph{
-			key[plslice[ind]]=char
+		upper := []rune(strings.ToUpper(alph))
+		lower := []rune(strings.ToLower(alph))
+		for ind := range alph{
+			key[plslice[ind]]=lower[ind]
+			key[plslice[ind+26]]=upper[ind]
 		}
 	}
 	return key, nil
 }
-func SubEncode(msg string, key map[rune]rune,fill bool) string{
-	msg = strings.ToLower(msg)
-	var cmsg []rune
-	for _,char := range msg{
-		cchar,exists := key[char]
+func SubEncode(ptxt string, key map[rune]rune,fill bool) string{
+	var ctxt []rune
+	for _,pchar := range ptxt{
+		cchar,exists := key[pchar]
 		if(exists){
-			cmsg = append(cmsg,cchar)
-		}else if(fill){
-			cmsg = append(cmsg,char)
+			ctxt = append(ctxt,cchar)
+		}else if(!fill&&unicode.IsLetter(pchar)){
+			ctxt = append(ctxt,'?')
 		}else{
-			cmsg = append(cmsg,'?')
+			ctxt = append(ctxt,pchar)
 		}
 	}
-	return string(cmsg)
+	return string(ctxt)
 }
 
-func SubDecode(msg string, key map[rune]rune,fill bool) string{
-	msg = strings.ToLower(msg)
-	var pmsg []rune
-	for _,char := range msg{
+func SubDecode(ctxt string, key map[rune]rune,fill bool) string{
+	var ptxt []rune
+	for _,char := range ctxt{
 		var found = false
 		for dec,enc :=range key{
 			if enc==char{
-				pmsg = append(pmsg, dec)
+				ptxt = append(ptxt, dec)
 				found = true
 				break
 			}
 		}
 		if(!found){
-			if(fill){
-				pmsg = append(pmsg, char)
+			if(!fill&&unicode.IsLetter(char)){
+				ptxt = append(ptxt, '?')
 			}else{
-				pmsg = append(pmsg, '?')
+				ptxt = append(ptxt, char)
 			}
 		}
 	}
-	return string(pmsg)
+	return string(ptxt)
+}
+
+func CaesarEncode(msg string, shft int) string{
+	shft = shft%26
+	if(shft<0){
+		shft = shft+26
+	}
+	alph := "abcdefghijklmnopqrstuvwxyz"
+	shiftkey,_ := QuickMap(alph[shft:]+alph[0:shft])
+	return SubEncode(msg,shiftkey,true)
+}
+
+func CaesarDecode(msg string, shft int) string{
+	return CaesarEncode(msg, -shft)
+}
+
+func Rot13(msg string) string{
+	return CaesarEncode(msg, 13)
+}
+
+func Atbash(msg string) string{
+	key,_ := QuickMap("zyxwvutsrqponmlkjihgfedcba")
+	return SubEncode(msg,key,true)
 }
