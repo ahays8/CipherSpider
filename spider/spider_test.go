@@ -109,3 +109,84 @@ func TestAtbashEncodeDecode(t *testing.T) {
 		t.Errorf("got %s, wanted %s", got, want)
 	}
 }
+
+//LetterNumber tests
+func TestLetterNumber(t *testing.T) {
+	want:=[]int{19,7,4,16,20,8,2,10,1,17,14,22,13,5,14,23,9,20,12,15,18,14,21,4,17,19,7,4,11,0,25,24,3,14,6}
+	got:=LetterNumber("The quick brown fox jumps over the lazy dog.")
+	for ind,num:=range want{
+		if(num!=got[ind]){
+			t.Errorf("got %d, wanted %d", got[ind], want[ind])
+		}
+	}
+}
+func TestNumberLetter(t *testing.T) {
+	want:="thequickbrownfoxjumpsoverthelazydog"
+	got:=NumberLetter([]int{19,7,4,16,20,8,2,10,1,17,14,22,13,5,14,23,9,20,12,15,18,14,21,4,17,19,7,4,11,0,25,24,3,14,6})
+	if (got != want) {
+		t.Errorf("got %s, wanted %s", got, want)
+	}
+}
+func TestLetterNumberLetter(t *testing.T) {
+	want:="thequickbrownfoxjumpsoverthelazydog"
+	got:=NumberLetter(LetterNumber(want))
+	if (got != want) {
+		t.Errorf("got %s, wanted %s", got, want)
+	}
+}
+func TestNumberLetterNumber(t *testing.T) {
+	want:=[]int{19,7,4,16,20,8,2,10,1,17,14,22,13,5,14,23,9,20,12,15,18,14,21,4,17,19,7,4,11,0,25,24,3,14,6}
+	got:=LetterNumber(NumberLetter(want))
+	for ind,num:=range want{
+		if(num!=got[ind]){
+			t.Errorf("got %d, wanted %d", got[ind], want[ind])
+		}
+	}
+}
+
+//Vigenere tests
+func TestVigenereEncode(t *testing.T) {
+	want:="Vho uwimo dryap fyb luwtu ofit tri najc foq."
+	got,_:=VigenereEncode("The quick brown fox jumps over the lazy dog.","c a  k e\n")
+	if (got != want) {
+		t.Errorf("got %s, wanted %s", got, want)
+	}
+}
+func TestVigenereDecode(t *testing.T) {
+	want:="The quick brown fox jumps over the lazy dog."
+	got,_:=VigenereDecode("Vho uwimo dryap fyb luwtu ofit tri najc foq.","cake")
+	if (got != want) {
+		t.Errorf("got %s, wanted %s", got, want)
+	}
+}
+func TestVigenereEncodeDecode(t *testing.T) {
+	want:="The quick brown fox jumps over the lazy dog."
+	got1,_:=VigenereEncode(want,"cake")
+	got,_:=VigenereDecode(got1,"cake")
+	if (got != want) {
+		t.Errorf("got %s, wanted %s", got, want)
+	}
+}
+//Running key tests
+func TestRunningEncode(t *testing.T) {
+	want:="Lvq uvwfi peqag tza vyfww kjvc wpw roml dfu."
+	got,_:=RunningEncode("The quick brown fox jumps over the lazy dog.","AllStar.txt")
+	if (got != want) {
+		t.Errorf("got %s, wanted %s", got, want)
+	}
+}
+func TestRunningDecode(t *testing.T) {
+	want:="The quick brown fox jumps over the lazy dog."
+	got,_:=RunningDecode("Lvq uvwfi peqag tza vyfww kjvc wpw roml dfu.","AllStar.txt")
+	if (got != want) {
+		t.Errorf("got %s, wanted %s", got, want)
+	}
+}
+func TestRunningEncodeDecode(t *testing.T) {
+	want:="The quick brown fox jumps over the lazy dog."
+	got1,_:=RunningEncode(want,"AllStar.txt")
+	got,_:=RunningDecode(got1,"AllStar.txt")
+	if (got != want) {
+		t.Errorf("got %s, wanted %s", got, want)
+	}
+}
