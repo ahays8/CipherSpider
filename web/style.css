@@ -1,5 +1,13 @@
-body{
-    background: url(images/web.png) no-repeat transparent;
-    background-color:darkslategrey;
-    color:white;
+body {
+  background: url(images/web.png) no-repeat transparent;
+  background-color: darkslategrey;
+  color: white;
+}
+
+.test1{
+  background-color: darkorange;
+}
+
+.test2{
+  background-color: green;
 }
